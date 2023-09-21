@@ -1,0 +1,37 @@
+[versions]
+junit = "5.10.0"
+mockito = "5.4.0"
+assertj = "3.24.2"
+spring-boot = "3.1.2"
+lombok = "1.18.28"
+
+[libraries]
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-core = { module = "org.springframework:spring-core" }
+spring-jdbc = { module = "org.springframework:spring-jdbc" }
+spring-context = { module = "org.springframework:spring-context" }
+
+[bundles]
+junit-implementation = ["junit-api", "junit-params"]
+junit-runtime = ["junit-engine"]
+mockito = ["mockito-core", "mockito-junit"]
+test-implementation = ["junit-api", "junit-params", "mockito-core", "mockito-junit", "assertj"]
+test-runtime = ["junit-engine"]
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+owasp = { id = "org.owasp.dependencycheck", version = "8.3.1" }
+jib = { id = "com.google.cloud.tools.jib", version = "3.3.2" }
