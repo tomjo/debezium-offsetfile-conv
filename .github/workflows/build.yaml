@@ -2,7 +2,7 @@ name: debezium-offsetfile-conv-build
 on:
   workflow_dispatch:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "ci" ]
   pull_request:
     branches: [ "master" ]
 
@@ -44,6 +44,7 @@ jobs:
   dependency-review:
     needs: build
     runs-on: self-hosted
+    steps:
       - name: Perform dependency review
         uses: actions/dependency-review-action@6c5ccdad469c9f8a2996bfecaec55a631a347034 # v3.1.0
 
