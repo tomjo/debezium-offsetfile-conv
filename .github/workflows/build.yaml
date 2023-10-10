@@ -38,9 +38,11 @@ jobs:
           generate-job-summary: true
           dependency-graph: generate-and-submit
       - name: Install SVU
+        env:
+          GOBIN: /usr/bin
         run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
       - name: Determine version
-        run: ls -al && echo "PROJECT_VERSION=$(svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV"
+        run: ls -al /usr/bin/ && echo "PROJECT_VERSION=$(svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV"
       - run: 'echo "Determined version: $PROJECT_VERSION"'
       - name: Build
         env:
