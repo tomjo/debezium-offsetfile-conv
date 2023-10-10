@@ -39,10 +39,10 @@ jobs:
           dependency-graph: generate-and-submit
       - name: Install SVU
         env:
-          GOBIN: /usr/bin
+          GOBIN: $HOME/bin
         run: sudo go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
       - name: Determine version
-        run: 'echo "PROJECT_VERSION=$(svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
+        run: 'ls -al $HOME/bin && echo "PROJECT_VERSION=$($HOME/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
       - name: Build
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
