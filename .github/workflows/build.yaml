@@ -42,7 +42,7 @@ jobs:
           GOBIN: /usr/bin
         run: sudo go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
       - name: Determine version
-        run: 'ls -al /usr/bin/ && echo "PROJECT_VERSION=$(svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
+        run: 'echo "PROJECT_VERSION=$(svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
       - name: Build
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
