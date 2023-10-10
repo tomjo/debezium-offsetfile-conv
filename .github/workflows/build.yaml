@@ -2,9 +2,16 @@ name: debezium-offsetfile-conv-build
 on:
   workflow_dispatch:
   push:
-    branches: [ "master", "ci" ]
+    branches:
+      - master
+      - ci
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
+
+defaults:
+  run:
+    shell: bash
 
 permissions:
   contents: read
@@ -31,9 +38,18 @@ jobs:
         with:
           generate-job-summary: true
           dependency-graph: generate-and-submit
+      - name: Install SVU
+        run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905
+      - name: Determine version
+        run: echo "PROJECT_VERSION=$($GOPATH/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV"
+      - run: 'echo "Determined version: $PROJECT_VERSION"'
       - name: Build
+        env:
+          ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
         run: ./gradlew build
       - name: OWASP dependency check
+        env:
+          ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
         run: ./gradlew dependencyCheckAggregate
       - name: Upload build reports
         if: always()
