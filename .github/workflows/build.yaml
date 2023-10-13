@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
@@ -37,23 +37,15 @@ jobs:
         with:
           generate-job-summary: true
           dependency-graph: generate-and-submit
-#      - name: Set up Go
-#        uses: actions/setup-go@v2
-#        with:
-#          go-version: 1.17
+      - name: Set up Go
+        uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe #v4.1.0
+        with:
+          go-version: 1.21.3
       - name: Install SVU
         run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
       - name: Determine version
         run: 'echo "PROJECT_VERSION=$(svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV"'
       - run: 'echo "Determined version: $PROJECT_VERSION"'
-#      - name: Determine version
-#        uses: ./.github/actions/svu
-#        id: version
-#        with:
-#          args: --build ${{ github.run_attempt }}
-##        run: 'ls -al $HOME/bin && echo "PROJECT_VERSION=$($HOME/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
-#      - name: Set version
-#        run: 'echo "PROJECT_VERSION=${{ steps.version.outputs.output }}" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
       - name: Build
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
@@ -70,7 +62,7 @@ jobs:
           path: build/reports/
   dependency-review:
     needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Perform dependency review
         uses: actions/dependency-review-action@6c5ccdad469c9f8a2996bfecaec55a631a347034 # v3.1.0
