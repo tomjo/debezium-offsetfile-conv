@@ -4,6 +4,6 @@ set -eu
 
 ARGS=$1
 
-output=$(svu $ARGS)
+output=$(sudo svu $ARGS)
 
 echo "::set-output name=output::${output}"
