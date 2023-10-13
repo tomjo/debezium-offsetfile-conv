@@ -44,7 +44,7 @@ jobs:
       - name: Install SVU
         run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
       - name: Determine version
-        run: 'echo "PROJECT_VERSION=$(svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV"'
+        run: 'echo "PROJECT_VERSION=$(svu --build ${{ github.run_number }})" >> "$GITHUB_ENV"'
       - run: 'echo "Determined version: $PROJECT_VERSION"'
       - name: Build
         env:
@@ -64,6 +64,18 @@ jobs:
 #          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_SECRET }}
 #          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
 #        run: ./gradlew publish
+      - name: Upload jar
+        if: always()
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        with:
+          name: jar
+          path: build/quarkus-app/app/
+      - name: Upload binary
+        if: always()
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        with:
+          name: binary
+          path: build/debezium-offsetfile-conv-${{ env.PROJECT_VERSION }}-runner
       - name: Upload build reports
         if: always()
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
