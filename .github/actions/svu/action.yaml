@@ -1,0 +1,15 @@
+name: 'svu'
+description: 'Semantic Version Util'
+inputs:
+  args:
+    description: 'args'
+    required: false
+    default: ''
+outputs:
+  output:
+    description: 'SVU command output'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.args }}
