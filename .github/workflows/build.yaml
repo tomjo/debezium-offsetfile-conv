@@ -44,7 +44,7 @@ jobs:
 #      - name: Determine version
 #        run: 'ls -al $HOME/bin && echo "PROJECT_VERSION=$($HOME/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
       - name: Determine version
-        uses: .github/actions/svu
+        uses: ./.github/actions/svu
         id: version
         with:
           args: --build ${{ github.run_attempt }}
