@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
@@ -37,20 +37,22 @@ jobs:
         with:
           generate-job-summary: true
           dependency-graph: generate-and-submit
-#      - name: Install SVU
-#        env:
-#          GOBIN: $HOME/bin
-#        run: sudo go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
-#      - name: Determine version
-#        run: 'ls -al $HOME/bin && echo "PROJECT_VERSION=$($HOME/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
-      - name: Determine version
-        uses: ./.github/actions/svu
-        id: version
+      - name: Set up Go
+        uses: actions/setup-go@v2
         with:
-          args: --build ${{ github.run_attempt }}
-#        run: 'ls -al $HOME/bin && echo "PROJECT_VERSION=$($HOME/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
-      - name: Set version
-        run: 'echo "PROJECT_VERSION=${{ steps.version.outputs.output }}" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
+          go-version: 1.17
+      - name: Install SVU
+        run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
+      - name: Determine version
+        run: 'echo "$PWD" && echo "$PATH" && echo "PROJECT_VERSION=$($HOME/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
+#      - name: Determine version
+#        uses: ./.github/actions/svu
+#        id: version
+#        with:
+#          args: --build ${{ github.run_attempt }}
+##        run: 'ls -al $HOME/bin && echo "PROJECT_VERSION=$($HOME/bin/svu --build ${{ github.run_attempt }})" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
+#      - name: Set version
+#        run: 'echo "PROJECT_VERSION=${{ steps.version.outputs.output }}" >> "$GITHUB_ENV" && echo Version: "$PROJECT_VERSION"'
       - name: Build
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
