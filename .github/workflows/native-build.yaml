@@ -1,9 +1,9 @@
+name: native-build
 on:
   workflow_dispatch:
   push:
   release:
     types: [created]
-name: native-build
 jobs:
   determine-version:
     name: determine-version
@@ -27,7 +27,7 @@ jobs:
         run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
       - name: Determine version (branch)
         if: env.BRANCH_NAME != 'master'
-        run: 'echo "PROJECT_VERSION=$(svu --prerelease ${{ env.BRANCH_NAME }}-alpha.$(git rev-list master.. --count) --build ${{ github.run_number }})" >> "$GITHUB_ENV"'
+        run: 'echo "PROJECT_VERSION=$(svu --pre-release ${{ env.BRANCH_NAME }}-alpha.$(git rev-list master.. --count) --build ${{ github.run_number }})" >> "$GITHUB_ENV"'
       - name: Determine version
         if: env.BRANCH_NAME == 'master'
         run: 'echo "PROJECT_VERSION=$(svu)" >> "$GITHUB_ENV"'

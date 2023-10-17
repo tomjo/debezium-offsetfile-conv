@@ -1,4 +1,4 @@
-name: build
+name: owasp
 on:
   workflow_dispatch:
   push:
