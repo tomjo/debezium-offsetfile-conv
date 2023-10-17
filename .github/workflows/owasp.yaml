@@ -14,8 +14,6 @@ defaults:
 
 permissions:
   contents: read
-  packages: write
-  pull-requests: write
 
 jobs:
   build:
@@ -38,24 +36,15 @@ jobs:
           generate-job-summary: true
           dependency-graph: generate-and-submit
 
-      - run: 'echo "PROJECT_VERSION=${{ github.sha }}" >> "$GITHUB_ENV"'
-      - run: 'echo "Determined version: $PROJECT_VERSION"'
-
-      - name: Build
+      - name: OWASP dependency check
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
-          QUARKUS_PACKAGE_TYPE: uber-jar
-        run: ./gradlew build
-      - name: Upload jar
+        run: ./gradlew dependencyCheckAggregate
+      - name: Upload build reports
+        if: always()
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
-          name: jar
-          path: build/quarkus-build/gen/debezium-offsetfile-conv-${{ env.PROJECT_VERSION }}-runner.jar
-
-#      - name: Publish
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
-#          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_SECRET }}
-#          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
-#        run: ./gradlew publish
+          name: build-reports
+          path: build/reports/
+      - name: Perform dependency review
+        uses: actions/dependency-review-action@6c5ccdad469c9f8a2996bfecaec55a631a347034 # v3.1.0
