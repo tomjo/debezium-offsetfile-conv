@@ -31,6 +31,10 @@ jobs:
         if: env.BRANCH_NAME == 'master'
         run: 'echo "PROJECT_VERSION=$(svu)" >> "$GITHUB_ENV"'
       - run: 'echo "Determined version: $PROJECT_VERSION"'
+      - run: 'echo "PROJECT_VERSION=$PROJECT_VERSION" >> "$GITHUB_OUTPUT"'
+        id: set-version
+    outputs:
+      projectVersion: ${{ steps.set-version.outputs.PROJECT_VERSION}}
 
 
 #  build-native-linux-x86:
@@ -71,6 +75,7 @@ jobs:
     runs-on: windows-2019
     needs: determine-version
     steps:
+      - run: 'echo "PROJECT_VERSION=${{ needs.determine-version.outputs.projectVersion }}" >> "$GITHUB_ENV"'
       - name: Checkout
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
