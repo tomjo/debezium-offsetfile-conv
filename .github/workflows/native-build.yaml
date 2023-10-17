@@ -49,7 +49,7 @@ jobs:
 #      - name: Set up JDK
 #        uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
 #        with:
-#          java-version: '17'
+#          java-version: '17.0.7'
 #          distribution: 'liberica'
 #          architecture: 'x64'
 #      - uses: gradle/wrapper-validation-action@56b90f209b02bf6d1deae490e9ef18b21a389cd4 #v1.1.0
@@ -82,7 +82,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
         with:
-          java-version: '17'
+          java-version: '17.0.7'
           distribution: 'liberica'
           architecture: 'x64'
       - uses: gradle/wrapper-validation-action@56b90f209b02bf6d1deae490e9ef18b21a389cd4 #v1.1.0
@@ -93,7 +93,14 @@ jobs:
           dependency-graph: generate-and-submit
       - run: 'echo "PROJECT_VERSION=${{ needs.determine-version.outputs.projectVersion }}" >> "$env:GITHUB_ENV"'
       - run: 'echo "Building $env:PROJECT_VERSION for Windows x64"'
-      - run: 'gu install native-image'
+      - name: Set up GraalVM (Java ${{ matrix.java-version }})
+        uses: graalvm/setup-graalvm@6c7d417a1ef253f4d667a69e6a5716927746e251 # v1.1.4.2
+        with:
+          distribution: 'graalvm'
+          java-version: '17.0.7'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
       - name: Build native (windows x64)
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
@@ -117,7 +124,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
         with:
-          java-version: '17'
+          java-version: '17.0.7'
           distribution: 'liberica'
           architecture: 'x64'
       - uses: gradle/wrapper-validation-action@56b90f209b02bf6d1deae490e9ef18b21a389cd4 #v1.1.0
@@ -128,6 +135,14 @@ jobs:
           dependency-graph: generate-and-submit
       - run: 'echo "PROJECT_VERSION=${{ needs.determine-version.outputs.projectVersion }}" >> "$GITHUB_ENV"'
       - run: 'echo "Building $PROJECT_VERSION for macOS"'
+      - name: Set up GraalVM (Java ${{ matrix.java-version }})
+        uses: graalvm/setup-graalvm@6c7d417a1ef253f4d667a69e6a5716927746e251 # v1.1.4.2
+        with:
+          distribution: 'graalvm'
+          java-version: '17.0.7'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
       - name: Build native (macOS)
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
