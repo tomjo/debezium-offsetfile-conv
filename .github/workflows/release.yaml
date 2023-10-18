@@ -1,0 +1,17 @@
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+jobs:
+  determine_version:
+    uses: ./.github/workflows/determine_version.yaml
+  build:
+    needs: determine_version
+    uses: ./.github/workflows/build.yaml
+    with:
+      version: ${{ needs.determine_version.outputs.version }}
+  native-build:
+    needs: determine_version
+    uses: ./.github/workflows/native-build.yaml
+    with:
+      version: ${{ needs.determine_version.outputs.version }}

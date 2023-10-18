@@ -1,46 +1,15 @@
 name: native-build
 on:
   workflow_dispatch:
-  release:
-    types: [created]
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
 jobs:
-  determine-version:
-    name: determine-version
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
-        with:
-          fetch-depth: '0'
-      - name: Set up Go
-        uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe #v4.1.0
-        with:
-          go-version: 1.21.3
-      - name: Install SVU
-        run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
-      - name: Get branch name (merge)
-        if: github.event_name != 'pull_request'
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-      - name: Get branch name (pull request)
-        if: github.event_name == 'pull_request'
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-      - name: Determine version (branch)
-        if: env.BRANCH_NAME != 'master'
-        run: 'echo "PROJECT_VERSION=$(svu --pre-release ${{ env.BRANCH_NAME }}-alpha.$(git rev-list origin/master.. --count))" >> "$GITHUB_ENV"'
-      - name: Determine version
-        if: env.BRANCH_NAME == 'master'
-        run: 'echo "PROJECT_VERSION=$(svu)" >> "$GITHUB_ENV"'
-      - run: 'echo "Determined version: $PROJECT_VERSION"'
-      - run: 'echo "PROJECT_VERSION=$PROJECT_VERSION" >> "$GITHUB_OUTPUT"'
-        id: set-version
-    outputs:
-      projectVersion: ${{ steps.set-version.outputs.PROJECT_VERSION}}
-
-
   build-native-linux-x64:
     name: build-native-linux-x64
     runs-on: ubuntu-22.04
-    needs: determine-version
     steps:
       - name: Checkout
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
@@ -58,19 +27,17 @@ jobs:
         with:
           generate-job-summary: true
           dependency-graph: generate-and-submit
-      - run: 'echo "PROJECT_VERSION=${{ needs.determine-version.outputs.projectVersion }}" >> "$GITHUB_ENV"'
-      - run: 'echo "Building $PROJECT_VERSION for linux x64"'
       - name: Build native (linux x64)
         env:
-          ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
+          ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
           QUARKUS_PACKAGE_TYPE: native
           QUARKUS_NATIVE_CONTAINERBUILD: true
         run: ./gradlew -x test build
       - name: Upload binary
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
-          name: debezium-offsetfile-conv-linux-amd64
-          path: build/debezium-offsetfile-conv-${{ env.PROJECT_VERSION }}-runner
+          name: debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}
+          path: build/debezium-offsetfile-conv-${{ inputs.version }}-runner
 
   build-native-windows-x64:
     name: build-native-windows-x64
@@ -93,8 +60,6 @@ jobs:
         with:
           generate-job-summary: true
           dependency-graph: generate-and-submit
-      - run: 'echo "PROJECT_VERSION=${{ needs.determine-version.outputs.projectVersion }}" >> "$env:GITHUB_ENV"'
-      - run: 'echo "Building $env:PROJECT_VERSION for Windows x64"'
       - name: Set up GraalVM (Java ${{ matrix.java-version }})
         uses: graalvm/setup-graalvm@6c7d417a1ef253f4d667a69e6a5716927746e251 # v1.1.4.2
         with:
@@ -105,14 +70,14 @@ jobs:
           native-image-job-reports: 'true'
       - name: Build native (windows x64)
         env:
-          ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
+          ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
           QUARKUS_PACKAGE_TYPE: native
         run: ./gradlew -x test build
       - name: Upload binary
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
-          name: debezium-offsetfile-conv-windows-amd64.exe
-          path: build/debezium-offsetfile-conv-${{ env.PROJECT_VERSION }}-runner.exe
+          name: debezium-offsetfile-conv-windows-amd64-${{ inputs.version }}.exe
+          path: build/debezium-offsetfile-conv-${{ inputs.version }}-runner.exe
 
   build-native-macos:
     name: build-native-macos
@@ -135,8 +100,6 @@ jobs:
         with:
           generate-job-summary: true
           dependency-graph: generate-and-submit
-      - run: 'echo "PROJECT_VERSION=${{ needs.determine-version.outputs.projectVersion }}" >> "$GITHUB_ENV"'
-      - run: 'echo "Building $PROJECT_VERSION for macOS"'
       - name: Set up GraalVM (Java ${{ matrix.java-version }})
         uses: graalvm/setup-graalvm@6c7d417a1ef253f4d667a69e6a5716927746e251 # v1.1.4.2
         with:
@@ -147,11 +110,11 @@ jobs:
           native-image-job-reports: 'true'
       - name: Build native (macOS)
         env:
-          ORG_GRADLE_PROJECT_projectVersion: ${{ env.PROJECT_VERSION }}
+          ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
           QUARKUS_PACKAGE_TYPE: native
         run: ./gradlew -x test build
       - name: Upload binary
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
-          name: debezium-offsetfile-conv-darwin-amd64
-          path: build/debezium-offsetfile-conv-${{ env.PROJECT_VERSION }}-runner
+          name: debezium-offsetfile-conv-darwin-amd64-${{ inputs.version }}
+          path: build/debezium-offsetfile-conv-${{ inputs.version }}-runner

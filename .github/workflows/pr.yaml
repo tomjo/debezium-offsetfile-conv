@@ -1,0 +1,30 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  determine_version:
+    uses: ./.github/workflows/determine_version.yaml
+  build:
+    needs: determine_version
+    uses: ./.github/workflows/build.yaml
+    with:
+      version: ${{ needs.determine_version.outputs.version }}
+  owasp:
+    needs: determine_version
+    uses: ./.github/workflows/owasp.yaml
+    with:
+      version: ${{ needs.determine_version.outputs.version }}

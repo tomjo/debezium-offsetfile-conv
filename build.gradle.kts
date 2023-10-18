@@ -2,6 +2,7 @@ plugins {
 	java
 	alias(libs.plugins.quarkus)
 	alias(libs.plugins.owasp)
+	signing
 }
 
 val projectVersion: String by project
@@ -12,6 +13,7 @@ version = projectVersion
 tasks.wrapper {
 	distributionType = Wrapper.DistributionType.ALL
 	gradleVersion = "8.4"
+	distributionSha256Sum= "f2b9ed0faf8472cbe469255ae6c86eddb77076c75191741b4a462f33128dd419"
 }
 
 configurations {
@@ -55,6 +57,13 @@ tasks.withType<JavaCompile> {
 
 dependencyCheck {
 	format = org.owasp.dependencycheck.reporting.ReportGenerator.Format.ALL.toString()
+}
+
+signing {
+	useInMemoryPgpKeys(findProperty("signingKey").toString(), findProperty("signingPassword").toString())
+	if(findProperty("signingKey") != null) {
+		sign(tasks["jar"])
+	}
 }
 
 tasks.withType<AbstractArchiveTask>().configureEach {

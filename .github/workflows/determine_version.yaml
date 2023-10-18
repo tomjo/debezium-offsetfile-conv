@@ -1,0 +1,38 @@
+on:
+  workflow_dispatch:
+  workflow_call:
+    outputs:
+      version:
+        description: "Determined version"
+        value: ${{ jobs.determine_version.outputs.version }}
+jobs:
+  determine_version:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          fetch-depth: '0'
+      - name: Set up Go
+        uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe #v4.1.0
+        with:
+          go-version: 1.21.3
+      - name: Install SVU
+        run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
+      - name: Get branch name (merge)
+        if: github.event_name != 'pull_request'
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+      - name: Get branch name (pull request)
+        if: github.event_name == 'pull_request'
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+      - name: Determine version (branch)
+        if: env.BRANCH_NAME != 'master'
+        run: 'echo "PROJECT_VERSION=$(svu --pre-release ${{ env.BRANCH_NAME }}-alpha.$(git rev-list origin/master.. --count))" >> "$GITHUB_ENV"'
+      - name: Determine version
+        if: env.BRANCH_NAME == 'master'
+        run: 'echo "PROJECT_VERSION=$(svu)" >> "$GITHUB_ENV"'
+      - run: 'echo "Determined version: $PROJECT_VERSION"'
+      - run: 'echo "PROJECT_VERSION=$PROJECT_VERSION" >> "$GITHUB_OUTPUT"'
+        id: set-version
+    outputs:
+      version: ${{ steps.set-version.outputs.PROJECT_VERSION}}
