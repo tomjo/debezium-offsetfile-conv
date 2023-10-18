@@ -1,3 +1,4 @@
+name: PR
 on:
   workflow_dispatch:
   push:

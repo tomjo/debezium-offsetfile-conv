@@ -1,3 +1,4 @@
+name: Determine version
 on:
   workflow_dispatch:
   workflow_call:
