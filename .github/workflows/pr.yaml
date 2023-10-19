@@ -34,7 +34,6 @@ jobs:
     uses: ./.github/workflows/container_build.yaml
     with:
       version: ${{ needs.determine_version.outputs.version }}
-      upload: true
   owasp:
     needs: determine_version
     uses: ./.github/workflows/owasp.yaml
