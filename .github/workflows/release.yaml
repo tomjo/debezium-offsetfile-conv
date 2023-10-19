@@ -1,8 +1,20 @@
 name: Release
+
 on:
   workflow_dispatch:
   release:
     types: [created]
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+  id-token: write
+
 jobs:
   determine_version:
     uses: ./.github/workflows/determine_version.yaml
