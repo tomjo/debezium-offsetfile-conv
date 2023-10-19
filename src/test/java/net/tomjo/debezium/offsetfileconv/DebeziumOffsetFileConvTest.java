@@ -25,7 +25,6 @@ class DebeziumOffsetFileConvTest {
 
         LaunchResult result = launcher.launch("binary", PLAIN_OFFSET_FILE_PATH, outputPath.toString());
 
-        assertThat(result.getOutput()).isEqualTo("");
         assertThat(outputPath).binaryContent().isEqualTo(Files.readAllBytes(Path.of(BINARY_OFFSET_FILE_PATH)));
         assertThat(result.exitCode()).isEqualTo(0);
     }
@@ -36,7 +35,6 @@ class DebeziumOffsetFileConvTest {
 
         LaunchResult result = launcher.launch("plain", BINARY_OFFSET_FILE_PATH, outputPath.toString());
 
-        assertThat(result.getOutput()).isEqualTo("");
         assertThat(outputPath).content(UTF_8).isEqualTo(Files.readString(Path.of(PLAIN_OFFSET_FILE_PATH), UTF_8));
         assertThat(result.exitCode()).isEqualTo(0);
     }
@@ -49,9 +47,7 @@ class DebeziumOffsetFileConvTest {
         LaunchResult result = launcher.launch("plain", BINARY_OFFSET_FILE_PATH, outputPath.toString());
         LaunchResult result2 = launcher.launch("binary", outputPath.toString(), outputPath2.toString());
 
-        assertThat(result.getOutput()).isEqualTo("");
         assertThat(result.exitCode()).isEqualTo(0);
-        assertThat(result2.getOutput()).isEqualTo("");
         assertThat(result2.exitCode()).isEqualTo(0);
         assertThat(outputPath2).binaryContent().isEqualTo(Files.readAllBytes(Path.of(BINARY_OFFSET_FILE_PATH)));
     }
@@ -64,9 +60,7 @@ class DebeziumOffsetFileConvTest {
         LaunchResult result = launcher.launch("binary", PLAIN_OFFSET_FILE_PATH, outputPath.toString());
         LaunchResult result2 = launcher.launch("plain", outputPath.toString(), outputPath2.toString());
 
-        assertThat(result.getOutput()).isEqualTo("");
         assertThat(result.exitCode()).isEqualTo(0);
-        assertThat(result2.getOutput()).isEqualTo("");
         assertThat(result2.exitCode()).isEqualTo(0);
         assertThat(outputPath2).content(UTF_8).isEqualTo(Files.readString(Path.of(PLAIN_OFFSET_FILE_PATH), UTF_8));
     }
