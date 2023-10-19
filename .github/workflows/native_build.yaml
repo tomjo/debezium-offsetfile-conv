@@ -1,4 +1,5 @@
 name: Native Build
+
 on:
   workflow_dispatch:
   workflow_call:
@@ -6,6 +7,15 @@ on:
       version:
         required: true
         type: string
+      upload:
+        required: false
+        type: boolean
+        default: false
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build-native-linux-x64:
     name: build-native-linux-x64
@@ -34,6 +44,7 @@ jobs:
           QUARKUS_NATIVE_CONTAINERBUILD: true
         run: ./gradlew -x test build
       - name: Upload binary
+        if: ${{ inputs.upload }}
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
           name: debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}
@@ -74,6 +85,7 @@ jobs:
           QUARKUS_PACKAGE_TYPE: native
         run: ./gradlew -x test build
       - name: Upload binary
+        if: ${{ inputs.upload }}
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
           name: debezium-offsetfile-conv-windows-amd64-${{ inputs.version }}.exe
@@ -114,6 +126,7 @@ jobs:
           QUARKUS_PACKAGE_TYPE: native
         run: ./gradlew -x test build
       - name: Upload binary
+        if: ${{ inputs.upload }}
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
           name: debezium-offsetfile-conv-darwin-amd64-${{ inputs.version }}

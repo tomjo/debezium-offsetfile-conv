@@ -11,8 +11,18 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       version: ${{ needs.determine_version.outputs.version }}
+      upload: true
+      sign: true
   native_build:
     needs: determine_version
     uses: ./.github/workflows/native_build.yaml
     with:
       version: ${{ needs.determine_version.outputs.version }}
+      upload: true
+  container_build:
+    needs: determine_version
+    uses: ./.github/workflows/container_build.yaml
+    with:
+      version: ${{ needs.determine_version.outputs.version }}
+      upload: true
+      sign: true
