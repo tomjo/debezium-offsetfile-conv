@@ -17,7 +17,6 @@ quarkus-bom = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quark
 quarkus-arc = { module = "io.quarkus:quarkus-arc" }
 quarkus-picocli = { module = "io.quarkus:quarkus-picocli" }
 quarkus-junit5 = { module = "io.quarkus:quarkus-junit5" }
-quarkus-container-image-docker = { module = "io.quarkus:quarkus-container-image-docker" }
 kafka-connect-runtime = { module = "org.apache.kafka:connect-runtime", version.ref = "kafka-connect" }
 
 [bundles]
