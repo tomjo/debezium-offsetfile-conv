@@ -2,6 +2,7 @@ plugins {
 	java
 	alias(libs.plugins.quarkus)
 	alias(libs.plugins.owasp)
+	signing
 }
 
 val projectVersion: String by project
@@ -55,6 +56,13 @@ tasks.withType<JavaCompile> {
 
 dependencyCheck {
 	format = org.owasp.dependencycheck.reporting.ReportGenerator.Format.ALL.toString()
+}
+
+signing {
+	useInMemoryPgpKeys(findProperty("signingKey").toString(), findProperty("signingPassword").toString())
+	if(findProperty("signingKey") != null) {
+		sign(tasks["jar"])
+	}
 }
 
 tasks.withType<AbstractArchiveTask>().configureEach {
