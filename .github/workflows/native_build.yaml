@@ -26,6 +26,10 @@ permissions:
   packages: write
   id-token: write
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build-native-linux-x64:
     name: build-native-linux-x64
