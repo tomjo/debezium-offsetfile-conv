@@ -31,3 +31,4 @@ jobs:
     with:
       version: ${{ needs.determine_version.outputs.version }}
       upload: true
+      sign: true
