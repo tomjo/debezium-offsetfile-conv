@@ -27,7 +27,6 @@ public class ToBinaryOffsetFileCommand implements Runnable {
     @Parameters(index = "1", description = "The destination file path")
     Path outPath;
 
-
     public ToBinaryOffsetFileCommand() {
     }
 
