@@ -35,7 +35,6 @@ repositories {
 dependencies {
 	annotationProcessor(enforcedPlatform(libs.quarkus.bom))
 	implementation(enforcedPlatform(libs.quarkus.bom))
-    implementation(libs.quarkus.container.image.docker)
 	implementation(libs.quarkus.arc)
 	implementation(libs.quarkus.picocli)
 	implementation(libs.kafka.connect.runtime){
