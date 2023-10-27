@@ -74,7 +74,7 @@ jobs:
           ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_SECRET }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
-        run: ./gradlew sign
+        run: ./gradlew sign --stacktrace
       - name: Upload build reports
         if: always()
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
