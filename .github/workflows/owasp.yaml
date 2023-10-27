@@ -1,6 +1,10 @@
 name: OWASP
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
   workflow_call:
     inputs:
       version:

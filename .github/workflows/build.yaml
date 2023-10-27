@@ -1,6 +1,18 @@
 name: Build
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+      upload:
+        required: false
+        type: boolean
+        default: false
+      sign:
+        required: false
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       version:
