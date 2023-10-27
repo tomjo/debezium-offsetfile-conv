@@ -21,7 +21,7 @@ jobs:
       - name: Install SVU
         run: go install github.com/caarlos0/svu@00b733b056534c0fbdb316bbd37c023e7bb80905 #v1.11.0
       - name: Get branch name (merge)
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.event_name != 'release'
         run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
       - name: Get branch name (pull request)
         if: github.event_name == 'pull_request'
@@ -29,9 +29,12 @@ jobs:
       - name: Determine version (branch)
         if: env.BRANCH_NAME != 'master'
         run: 'echo "PROJECT_VERSION=$(svu --pre-release ${{ env.BRANCH_NAME }}-alpha.$(git rev-list origin/master.. --count))" >> "$GITHUB_ENV"'
-      - name: Determine version
-        if: env.BRANCH_NAME == 'master'
+      - name: Determine version (master)
+        if: github.event_name != 'release' && env.BRANCH_NAME == 'master'
         run: 'echo "PROJECT_VERSION=$(svu)" >> "$GITHUB_ENV"'
+      - name: Determine version (release)
+        if: github.event_name == 'release'
+        run: 'echo "PROJECT_VERSION=${{ github.event.release.tag_name }}" >> "$GITHUB_ENV"'
       - run: 'echo "Determined version: $PROJECT_VERSION"'
       - run: 'echo "PROJECT_VERSION=$PROJECT_VERSION" >> "$GITHUB_OUTPUT"'
         id: set-version
