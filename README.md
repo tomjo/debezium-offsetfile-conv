@@ -6,6 +6,11 @@
 
 The text based file consists of json lines, one line per entry of the serialized HashMap. Key and value are separated by default with `||@@||`, but this is configurable.
 
+Example:
+```
+["pulsar",{"server":"foo"}]||@@||{"transaction_id":null,"ts_sec":1695302112,"file":"mysql-bin.001097","pos":293351573,"gtids":"fa712d50-ae8e-11ec-bc29-57e50ee87685:1-879838146","server_id":3}
+```
+
 ## Configuration
 
 Following subcommands are available:
