@@ -84,6 +84,15 @@ jobs:
         with:
           name: debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}
           path: build/debezium-offsetfile-conv-${{ inputs.version }}-runner
+      - name: Rename binary
+        run: mv "build/debezium-offsetfile-conv-${{ inputs.version }}-runner" "debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}"
+      - name: Add binary to release
+        if: github.event_name == 'release' && ${{ inputs.upload }}
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        with:
+          tag_name: ${{ inputs.version }}
+          files: |
+            debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}
       - name: Registry login
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
@@ -152,6 +161,15 @@ jobs:
         with:
           name: debezium-offsetfile-conv-windows-amd64-${{ inputs.version }}.exe
           path: build/debezium-offsetfile-conv-${{ inputs.version }}-runner.exe
+      - name: Rename binary
+        run: mv "build/debezium-offsetfile-conv-${{ inputs.version }}-runner.exe" "debezium-offsetfile-conv-windows-amd64-${{ inputs.version }}.exe"
+      - name: Add binary to release
+        if: github.event_name == 'release' && ${{ inputs.upload }}
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        with:
+          tag_name: ${{ inputs.version }}
+          files: |
+            debezium-offsetfile-conv-windows-amd64-${{ inputs.version }}.exe
 
   build-native-macos:
     name: build-native-macos
@@ -192,3 +210,12 @@ jobs:
         with:
           name: debezium-offsetfile-conv-darwin-amd64-${{ inputs.version }}
           path: build/debezium-offsetfile-conv-${{ inputs.version }}-runner
+      - name: Rename binary
+        run: mv "build/debezium-offsetfile-conv-${{ inputs.version }}-runner" "debezium-offsetfile-conv-darwin-amd64-${{ inputs.version }}"
+      - name: Add binary to release
+        if: github.event_name == 'release' && ${{ inputs.upload }}
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        with:
+          tag_name: ${{ inputs.version }}
+          files: |
+            debezium-offsetfile-conv-darwin-amd64-${{ inputs.version }}

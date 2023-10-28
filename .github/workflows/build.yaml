@@ -87,3 +87,12 @@ jobs:
         with:
           name: debezium-offsetfile-conv-${{ inputs.version }}.jar
           path: build/quarkus-build/gen/debezium-offsetfile-conv-${{ inputs.version }}-runner.jar
+      - name: Rename jar
+        run: mv "build/debezium-offsetfile-conv-${{ inputs.version }}-runner.jar" "debezium-offsetfile-conv-${{ inputs.version }}.jar"
+      - name: Add binary to release
+        if: github.event_name == 'release' && ${{ inputs.upload }}
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        with:
+          tag_name: ${{ inputs.version }}
+          files: |
+            debezium-offsetfile-conv-${{ inputs.version }}.jar
