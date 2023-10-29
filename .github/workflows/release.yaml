@@ -24,7 +24,6 @@ jobs:
     with:
       version: ${{ needs.determine_version.outputs.version }}
       upload: true
-      sign: true
     secrets: inherit
   native_build:
     needs: determine_version

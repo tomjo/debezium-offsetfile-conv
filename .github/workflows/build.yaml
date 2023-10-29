@@ -9,20 +9,12 @@ on:
         required: false
         type: boolean
         default: false
-      sign:
-        required: false
-        type: boolean
-        default: false
   workflow_call:
     inputs:
       version:
         required: true
         type: string
       upload:
-        required: false
-        type: boolean
-        default: false
-      sign:
         required: false
         type: boolean
         default: false
@@ -68,13 +60,6 @@ jobs:
           ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
           QUARKUS_PACKAGE_TYPE: uber-jar
         run: ./gradlew quarkusIntTest
-      - name: Sign
-        if: ${{ inputs.sign }}
-        env:
-          ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_SECRET }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_PASSPHRASE }}
-        run: ./gradlew sign
       - name: Upload build reports
         if: always()
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
