@@ -36,11 +36,11 @@ Commands:
 
 ### Pre-built binaries
 
-You can download pre-built binaries from the latest GitHub release: <https://github.com/tomjo/debezium-offsetfile-conv/releases/latest>
+You can download pre-built binaries from the latest GitHub release: https://github.com/tomjo/debezium-offsetfile-conv/releases/latest
 
 ### Container image
 
-Images available at ghcr.io/tomjo/debezium-offsetfile-conv:<release version>
+Images available at https://ghcr.io/tomjo/debezium-offsetfile-conv
 
 ### From source
 
