@@ -85,7 +85,7 @@ jobs:
           name: debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}
           path: build/debezium-offsetfile-conv-${{ inputs.version }}-runner
       - name: Rename binary
-        run: mv "build/debezium-offsetfile-conv-${{ inputs.version }}-runner" "debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}"
+        run: cp "build/debezium-offsetfile-conv-${{ inputs.version }}-runner" "debezium-offsetfile-conv-linux-amd64-${{ inputs.version }}"
       - name: Add binary to release
         if: github.event_name == 'release' && ${{ inputs.upload }}
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
