@@ -27,11 +27,6 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       version: ${{ needs.determine_version.outputs.version }}
-  native_build:
-    needs: determine_version
-    uses: ./.github/workflows/native_build.yaml
-    with:
-      version: ${{ needs.determine_version.outputs.version }}
   owasp:
     needs: determine_version
     uses: ./.github/workflows/owasp.yaml
