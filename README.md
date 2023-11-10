@@ -22,7 +22,7 @@ Following subcommands are available:
   * `-s,--separator <separator>` to override the default key-value separator
 
 ```shell
-Usage: debezium-offsetfile-conv [-hV] [COMMAND]
+Usage: java -jar debezium-offsetfile-conv.jar [-hV] [COMMAND]
     -h, --help      Show this help message and exit.
     -V, --version   Print version information and exit.
 Commands:
