@@ -34,22 +34,20 @@ Commands:
 
 ## Installation
 
-### Pre-built binaries
+### Pre-built jar
 
-You can download pre-built binaries from the latest GitHub release: https://github.com/tomjo/debezium-offsetfile-conv/releases/latest
+You can download the pre-built jar file from the latest GitHub release: https://github.com/tomjo/debezium-offsetfile-conv/releases/latest
 
 ### Container image
 
 Images available at https://ghcr.io/tomjo/debezium-offsetfile-conv
 
-### From source
+### Building from source
 
 Requires Java 17 (or later).
 
 ```shell
 ./gradlew build
 ```
-
-It is built with the [quarkus](https://quarkus.io) framework, so specify environment variable `QUARKUS_PACKAGE_TYPE` to build the different variants (uber-jar, native).
 
 The container build requires a container build tool that handles Dockerfile such as Docker, Podman, Kaniko, ...

@@ -1,10 +1,16 @@
-FROM quay.io/quarkus/quarkus-micro-image:2.0-2023-10-01
-WORKDIR /work/
-RUN chown 1001 /work \
-    && chmod "g+rwX" /work \
-    && chown 1001:root /work
-COPY --chown=1001:root build/*-runner /work/application
+FROM registry.access.redhat.com/ubi8/openjdk-11:1.17
 
-USER 1001
+ENV LANGUAGE='en_US:en'
 
-ENTRYPOINT ["./application"]
+# We make four distinct layers so if there are application changes the library layers can be re-used
+COPY --chown=185 build/quarkus-app/lib/ /deployments/lib/
+COPY --chown=185 build/quarkus-app/*.jar /deployments/
+COPY --chown=185 build/quarkus-app/app/ /deployments/app/
+COPY --chown=185 build/quarkus-app/quarkus/ /deployments/quarkus/
+
+USER 185
+ENV AB_JOLOKIA_OFF="true"
+ENV JAVA_OPTS_APPEND="-Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+
+ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]

@@ -9,12 +9,20 @@ on:
         required: false
         type: boolean
         default: false
+      sign:
+        required: false
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       version:
         required: true
         type: string
       upload:
+        required: false
+        type: boolean
+        default: false
+      sign:
         required: false
         type: boolean
         default: false
@@ -28,6 +36,10 @@ permissions:
   pull-requests: write
   packages: write
   id-token: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -49,16 +61,25 @@ jobs:
         with:
           generate-job-summary: true
           dependency-graph: generate-and-submit
+      - name: Install cosign
+        if: ${{ inputs.sign }}
+        uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19 # v3.1.2
+        with:
+          cosign-release: 'v2.1.1'
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
 
       - name: Build
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
-          QUARKUS_PACKAGE_TYPE: uber-jar
+          QUARKUS_PACKAGE_TYPE: "uber-jar"
         run: ./gradlew build
       - name: Integration tests
         env:
           ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
-          QUARKUS_PACKAGE_TYPE: uber-jar
+          QUARKUS_PACKAGE_TYPE: "uber-jar"
         run: ./gradlew quarkusIntTest
       - name: Upload build reports
         if: always()
@@ -74,10 +95,44 @@ jobs:
           path: build/quarkus-build/gen/debezium-offsetfile-conv-${{ inputs.version }}-runner.jar
       - name: Rename jar
         run: mv "build/debezium-offsetfile-conv-${{ inputs.version }}-runner.jar" "debezium-offsetfile-conv-${{ inputs.version }}.jar"
-      - name: Add binary to release
+      - name: Add jar to release
         if: github.event_name == 'release' && ${{ inputs.upload }}
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
         with:
           tag_name: ${{ inputs.version }}
           files: |
             debezium-offsetfile-conv-${{ inputs.version }}.jar
+      - name: Build fast-jar for container
+        env:
+          ORG_GRADLE_PROJECT_projectVersion: ${{ inputs.version }}
+          QUARKUS_PACKAGE_TYPE: "fast-jar"
+        run: ./gradlew build
+      - name: Registry login
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract docker metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build and push
+        id: build-and-push
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: ${{ inputs.upload }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Sign image
+        if: ${{ inputs.sign }}
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
