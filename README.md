@@ -44,7 +44,7 @@ Images available at https://ghcr.io/tomjo/debezium-offsetfile-conv
 
 ### Building from source
 
-Requires Java 17 (or later).
+Requires Java 11 (or later).
 
 ```shell
 ./gradlew build
