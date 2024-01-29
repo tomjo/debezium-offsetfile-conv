@@ -51,3 +51,7 @@ Requires Java 11 (or later).
 ```
 
 The container build requires a container build tool that handles Dockerfile such as Docker, Podman, Kaniko, ...
+
+## License
+
+Licensed as GPLv3. See LICENSE file for details. If you have a use case that would require a different license, please contact me.
