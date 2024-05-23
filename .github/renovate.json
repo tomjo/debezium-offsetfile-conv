@@ -4,7 +4,7 @@
     "config:base",
     ":disableDependencyDashboard",
     ":pinSkipCi",
-    ":schedule:monthly"
+    "schedule:monthly"
   ],
   "labels": [
     "renovate"
